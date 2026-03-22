@@ -1,0 +1,31 @@
+paths:
+  excel_path: jp5c01881_si_002.xlsx
+  processed_csv: data/processed/cleaned.csv
+  artifacts_dir: artifacts
+
+split:
+  train_frac: 0.70
+  val_frac: 0.15
+  test_frac: 0.15
+  seed: 42
+
+featurize:
+  morgan_radius: 2
+  morgan_n_bits: 2048
+
+training:
+  batch_size: 128
+  lr: 0.001
+  weight_decay: 1.0e-5
+  max_epochs: 200
+  patience: 25
+  huber_delta: 1.0
+
+mlp:
+  hidden_dims: [512, 256, 128]
+  dropout: 0.2
+
+gnn:
+  hidden_dim: 128
+  num_layers: 4
+  dropout: 0.2
