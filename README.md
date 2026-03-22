@@ -5,11 +5,13 @@ Predict **aqueous diffusion coefficient** \(D\) from **SMILES** and **temperatur
 ## Setup (venv)
 
 ```bash
-cd diffusion-model-molecular
+cd molecular-diffusion   # repository root
 python3 -m venv .venv
 source .venv/bin/activate   # Windows: .venv\Scripts\activate
 pip install -U pip
 pip install -e ".[dev]"
+# Optional: local web demo API
+pip install -e ".[demo]"
 ```
 
 **PyTorch Geometric:** if `pip install -e .` fails on `torch-geometric`, install PyTorch first from [pytorch.org](https://pytorch.org), then follow [PyG installation](https://pytorch-geometric.readthedocs.io/en/latest/install/installation.html) for your platform (CPU/CUDA). On macOS CPU, often:
@@ -71,9 +73,29 @@ D = p.predict_D("CC", 298.15)
 
 Training temperature range is stored in the checkpoint config for extrapolation warnings.
 
+## Web demo (Vite + FastAPI)
+
+Requires a trained checkpoint (default: `artifacts/models/gnn_scaffold.pt`). Override with `DIFFUSION_MODEL_PATH`.
+
+**Terminal 1 — API** (from repository root, venv activated):
+
+```bash
+./scripts/run_demo.sh
+# or: uvicorn demo_api.main:app --reload --port 8000
+```
+
+**Terminal 2 — UI**:
+
+```bash
+cd web && pnpm install && pnpm dev
+```
+
+Open [http://localhost:5173](http://localhost:5173). The dev server proxies `/api` to `http://127.0.0.1:8000`.
+
+Optional: `DEMO_CORS_ORIGINS` (comma-separated) if you serve the UI from another origin.
+
 ## Interpretation
 
 - Metrics are reported for **log10(D)** (primary) and linear **D** after back-transform.
 - **Random** vs **scaffold** splits measure different generalization axes; see the research note in your project plan.
 - Model is **water-only**; **T** outside the training range is extrapolation.
-# molecular-diffusion
